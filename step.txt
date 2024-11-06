@@ -1,0 +1,313 @@
+https://sdk.openui5.org/topic/70ef981d350a495b940640801701c409
+
+npm install --global @ui5/cli > install
+ui5 -- help > check
+Create a package.json file: npm init -y > package.json  \
+Generate a ui5.yaml file: ui5 init 
+
+The package.json file holds meta data related to the project.
+It gives information to node or npm about the project, and allows it to identify the project as well as handle the project's dependencies.
+
+ui5.yaml is the configuration file for the UI5 tooling.Kinda configuration file.
+It is a YAML file that defines the build pipeline, which is a set of steps that are executed in a specific order to build and deploy a project.
+
+Installing dependencies. Running this will throw and error.Manually add to manifest.json > Not sure if this should be installed in webapp folder
+OR the project root.
+First attempt was in webapp folder.
+add and modify the file from documentation.
+ui5 use sapui5@latest
+STEP 1
+After index.html was added to webapp folder, add a script for bootstraping.
+	<script
+	id="sap-ui-bootstrap"
+	src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_belize"
+	data-sap-ui-libs="sap.m"
+	data-sap-ui-compatVersion="edge"
+	data-sap-ui-async="true"
+	data-sap-ui-onInit="module:sap/ui/demo/walkthrough/index"
+	data-sap-ui-resourceroots='{
+		"sap.ui.demo.walkthrough": "./"
+	}'>
+</script>
+
+STEP 2
+Then create a index.js file for the app, cause I should not be running any java script in index.html.
+
+In this index.js file I am putting all the application logic I'll be using.
+sap.ui.define([])
+Then inside I will be creating a function (later on explained "use.strict" with an alert.)
+To check if UI5 is working.
+
+STEP 3
+Next part is to add the controls to the app.
+In order to do that we are gonna assign the body a class and an id.
+Then we need to add our text control in index.js / In order to do that I use the namespace sap/m/Text.
+Then pass it into my constractor. Text
+
+Once in there I need to creare a new object/ Text control/
+I will use the method placeAt() to add it to the DOM.
+    new	Text({
+    	text: "Hello UI5 Web App"
+    }).placeAt("content");
+   
+ STEP 4
+XML Views
+
+<mvc:View
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc">
+    <Text text="Hello UI5 again!">
+</mvc:View>
+
+Then I need to change the index.js / cause I am not pulling the text directly in index.js rather the view.
+Also Change the paramater inside the constructor to XMLView.
+Remove the text control from index.js/
+Call 
+	XMLView({sap.ui.demo.walkthrough.view.App});
+	Which refrence to this ----- >
+
+	data-sap-ui-onInit="module:sap/ui/demo/walkthrough/index"
+	data-sap-ui-resourceroots='{
+		"sap.ui.demo.walkthrough": "./" <---
+
+STEP 5
+Controllers
+
+Create a button for a pop up.
+Which will be a seperate controller.
+I am gonna pull out the controller and refrence in the view.
+controller refrence inside the App.view.xml
+controllerName="sap.ui.demo/walkthrough/controller/App"
+
+App.controller.js
+
+sap.ui.define([
+    "sap/ui/core/mvc/Controller"
+], function (Controller) {
+    "use strict";
+    return Controller.extend("sap.ui.demo.walkthrough.controller.App", {
+        onShowHello: function () {
+            // show a native JavaScript alert
+            alert("Hello there!");
+        }
+    });
+})
+
+STEP 6
+Modules:
+
+Moddules are basiclly  resources in SAP.
+So I'll be adding a module resource in App.controller.js which will allow me to call the MessageToast from the sap.m library.
+And replace the alert with this message.
+
+STEP 7
+JSON Module
+I'll be adding an input field control to my app, bind it's value to the model and I'll be binding this same value to the description.
+
+Call the onInit Event method in the controller.js
+onIinit : function () {
+        // set data model on the view
+        var oData = {
+            recipient : {
+                name : "UI5"
+                
+            }
+        };
+        },
+Next I need to create the json model and assign it to the xml view so the xml can access it.
+Then in my view I need to create the input control.
+
+
+----------------------------------------------------------------
+{
+  "_version": "1.1.0",
+  "start_url": "/index.html",
+  "sap.app": {
+    "_version": "1.1.0",
+    "id": "sap.ui.demo.walkthrough",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "1.0.0"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "tags": {
+      "keywords": ["{{keyword1}}", "{{keyword2}}"]
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/sap/opu/odata/sap/YOUR_SERVICE_NAME/",
+        "settings": {
+          "localUri": "localService/metadata.xml"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "_version": "1.1.0",
+    "icons": {
+      "icon": "sap-icon://home",
+      "favIcon": "favicon.ico"
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    },
+    "supportedThemes": ["sap_hcb", "sap_bluecrystal"]
+  },
+  "sap.ui5": {
+    "_version": "1.1.0",
+    "resources": {
+      "css": [
+        {
+          "uri": "css/style.css"
+        }
+      ]
+    },
+    "dependencies": {
+      "minUI5Version": "1.60",
+      "libs": {
+        "sap.m": {}
+      }
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "sap.ui.demo.walkthrough.i18n.i18n",
+          "supportedLocales": [""],
+          "fallbackLocale": ""
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "settings": {}
+      }
+    },
+    "rootView": {
+      "viewName": "sap.ui.demo.walkthrough.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "app"
+    },
+    "handleValidation": false,
+    "contentDensities": {
+      "compact": false,
+      "cozy": false
+    }
+  }
+}
+
+One less error message in Console
+{
+  "_version": "1.1.0",
+
+  "start_url": "<startUrl>",
+
+  "sap.app": {
+    "_version": "1.1.0",
+    "id": "sap.ui.demo.walkthrough",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "1.0.0"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "tags": {
+      "keywords": ["{{<keyword1>}}", "{{<keyword2>}}"]
+    },
+    "dataSources": {
+      "<dataSourceAlias>": {
+        "uri": "<uri>",
+        "settings": {
+          "localUri": "<localUri>"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "_version": "1.1.0",
+    "icons": {
+      "icon": "<icon>",
+      "favIcon": "<favIcon>",
+      "phone": "<phone>",
+      "phone@2": "<phone@2>",
+      "tablet": "<tablet>",
+      "tablet@2": "<tablet@2>"
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    },
+    "supportedThemes": ["sap_hcb", "sap_bluecrystal"]
+  },
+  "sap.ui5": {
+    "_version": "1.1.0",
+    "resources": {
+      "js": [
+        {
+          "uri": "<uri>"
+        }
+      ],
+      "css": [
+        {
+          "uri": "css/style.css"
+        
+        }
+      ]
+    },
+    "dependencies": {
+      "minUI5Version": "1.60",
+      "libs": {
+        "sap.m": {}
+      }
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "sap.ui.demo.walkthrough.i18n.i18n",
+          "supportedLocales":[""],
+          "fallbackLocale": ""
+        },
+        "uri": "<uriRelativeToManifest>"
+      },
+      "": {
+        "dataSource": "<dataSourceAlias>",
+        "settings": {}
+      }
+    },
+    "rootView": {
+      "viewName": "sap.ui.demo.walkthrough.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "app"
+    },
+    "handleValidation": false,
+    "config": {},
+    "routing": {},
+    "extends": {
+      "component": "<extendedComponentId>",
+      "minVersion": "<minComp1Version>",
+      "extensions": {}
+    },
+    "contentDensities": {
+      "compact": false,
+      "cozy": false
+    }
+  },
+
+  "sap.platform.abap": {
+    "_version": "1.1.0",
+    "uri": "<uri>"
+  },
+  "sap.platform.hcp": {
+    "_version": "1.1.0",
+    "uri": "<uri>"
+  }
+}
