@@ -1,4 +1,4 @@
-sap.sap.ui.define([],function(){
+sap.ui.define([],function(){
     'use strict';
     return {
         statusText: function(sStatus) {
