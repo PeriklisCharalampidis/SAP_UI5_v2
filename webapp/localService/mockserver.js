@@ -21,7 +21,7 @@ sap.ui.define([
 
             //simulate
             var sPath = "../localService";
-            oMockServer.simulate(sPath + "/metadata.xml", sPath + "/mockdata.json");
+            oMockServer.simulate(sPath + "/metadata.xml", sPath + "/mockdata/invoices.json");
 
             // start the server
             oMockServer.start();
